@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mockingjava" default="compile.module.mockingjava">
+  <dirname property="module.mockingjava.basedir" file="${ant.file.module_mockingjava}"/>
+  
+  <property name="module.jdk.home.mockingjava" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mockingjava" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mockingjava" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mockingjava" value="${compiler.args}"/>
+  
+  <property name="mockingjava.output.dir" value="${module.mockingjava.basedir}/out/production/MockingJava"/>
+  <property name="mockingjava.testoutput.dir" value="${module.mockingjava.basedir}/out/test/MockingJava"/>
+  
+  <path id="mockingjava.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mockingjava.module.classpath">
+    <path refid="${module.jdk.classpath.mockingjava}"/>
+  </path>
+  
+  <path id="mockingjava.runtime.module.classpath">
+    <pathelement location="${mockingjava.output.dir}"/>
+    <pathelement location="${mockingjava.testoutput.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mockingjava">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mockingjava">
+    <patternset refid="excluded.from.module.mockingjava"/>
+  </patternset>
+  
+  <path id="mockingjava.module.sourcepath">
+    <dirset dir="${module.mockingjava.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mockingjava" depends="compile.module.mockingjava.production,compile.module.mockingjava.tests" description="Compile module MockingJava"/>
+  
+  <target name="compile.module.mockingjava.production" description="Compile module MockingJava; production classes">
+    <mkdir dir="${mockingjava.output.dir}"/>
+    <javac2 destdir="${mockingjava.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mockingjava}/javac">
+      <compilerarg line="${compiler.args.mockingjava}"/>
+      <bootclasspath refid="mockingjava.module.bootclasspath"/>
+      <classpath refid="mockingjava.module.classpath"/>
+      <src refid="mockingjava.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mockingjava"/>
+    </javac2>
+    
+    <copy todir="${mockingjava.output.dir}">
+      <fileset dir="${module.mockingjava.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mockingjava.tests" depends="compile.module.mockingjava.production" description="compile module MockingJava; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mockingjava" description="cleanup module">
+    <delete dir="${mockingjava.output.dir}"/>
+    <delete dir="${mockingjava.testoutput.dir}"/>
+  </target>
+</project>
